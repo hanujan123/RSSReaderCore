@@ -1,0 +1,115 @@
+﻿@model RSSReaderCore.Models.FeedViewModel
+
+@{
+	ViewData["Title"] = "Feed Detail";
+}
+
+@section Scripts {
+	<script>
+
+		//article reload function
+		$("button#ReloadArticles").on("click", function () {
+			reloadArticles();
+		});
+		//reload articles and apply filter
+		$("#FilterByDate").on("submit", function () {
+			filter = $("#FilterByDate").serialize();
+			reloadArticles();
+		});
+		//load articles on first page load
+		filter = $("#FilterByDate").serialize();
+		reloadArticles();
+
+
+		var filter;
+		function reloadArticles() {
+			$.ajax({
+				method: "GET",
+				url: "@Url.Action("ReloadArticles")/@Model.FeedId",
+				dataType: "JSON",
+				data: filter,
+				success: function (response) {
+					//remove articles
+					$("#ArticleList tbody tr").remove();
+
+					//populate table with new articles
+					for (var i = 0; i < response.articles.length; i++) {
+						var title = "<td class='str'>" + response.articles[i].title + "</td>";
+						var publishDate = "<td>" + response.articles[i].publishDate + "</td>";
+						var link = "<td><a href='" + response.articles[i].link + "'>Link</a></td>";
+
+						tr = "<tr class='searchElement'>" + (title + publishDate + link) + "</tr>";
+						$("#ArticleList tbody").append(tr)
+					}
+				}
+			});
+		}
+	</script>
+	<script src="~/js/search.js"></script>
+}
+
+<h1>Details</h1>
+
+<div>
+	<hr />
+	<h4>@Model.Record.Name</h4>
+
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Title)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Title)
+		</dd>
+
+		<dt class="col-sm-2">
+			Image
+		</dt>
+		<dd class="col-sm-10">
+			<img alt="" src="@Model.ImageUrl" />
+		</dd>
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Description)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Description)
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Index">Back to Feeds</a>
+</div>
+<hr />
+<div>
+	<h4>List of Articles</h4>
+	<div class="row">
+		<div class="col-md-auto">
+			<form action="javascript:void(0);" id="FilterByDate">
+				<label for="dateFrom">Filter from</label>
+				<input type="date" name="dateFrom" value="" />
+				<label for="dateTo">Filter to</label>
+				<input type="date" name="dateTo" value="" />
+				<input type="submit" name="submit" value="Apply filter" />
+			</form>
+		</div>
+		<div class="col-md-auto">
+			<label for="titleSearch">Search by title</label>
+			<input type="text" name="titleSearch" value="" id="strSearchInput" />
+		</div>
+		<div class="col-md-4">
+			<button id="ReloadArticles" class="btn-info">Reload Articles</button>
+		</div>
+	</div>
+	<table id="ArticleList" class="table SearchContainer">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Publish date</th>
+				<th>Link</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
