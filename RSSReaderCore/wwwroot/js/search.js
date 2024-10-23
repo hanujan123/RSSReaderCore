@@ -1,6 +1,6 @@
-﻿//search funncctionality
+﻿		//search funncctionality
 var minSearchLen = 2;
-$("#strSearchInput").on("change input", function () {
+		$("#strSearchInput").on("change input", function () {
 		var searchStr = $("#strSearchInput")[0].value.toLowerCase();
 		if (searchStr.length >= minSearchLen) {
 				var articles = $(".SearchContainer .searchElement .str")
@@ -10,8 +10,8 @@ $("#strSearchInput").on("change input", function () {
 						else
 								$(articles[i].parentNode).hide();
 				}
-		}
-		else {
+				}
+				else {
 				$(".SearchContainer .searchElement").show();
-		}
-});
+				}
+		});
